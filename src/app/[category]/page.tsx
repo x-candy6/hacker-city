@@ -1,29 +1,26 @@
 import Link from 'next/link';
 import { contentClient } from '@/lib/content';
 import { prepareArticleCard } from '@stackmatix/cms-core';
-import BlossomSVG from '@/components/BlossomSVG';
 import { siteConfig } from '@/lib/config';
 
 export const revalidate = 300;
 
-const categoryToVariant: Record<string, 1 | 2 | 3 | 4 | 5 | 6> = {
-  technology: 2,
-  business: 3,
-  culture: 4,
-  earth: 5,
-  health: 6,
-  news: 1,
-  sport: 2,
-  arts: 4,
-  travel: 5,
-};
+/** Map category slug to its brand color. */
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    technology: '#2EE9FF', business: '#FF6A00', culture: '#FF2D8F',
+    earth: '#39FF14', health: '#A02EFF', news: '#FF2D8F',
+    sport: '#2EE9FF', arts: '#D0FF00', travel: '#39FF14',
+  };
+  return colors[category] ?? '#FF2D8F';
+}
 
 /** Generate static params for all known categories. */
 export async function generateStaticParams() {
   return siteConfig.categories.map((c) => ({ category: c.slug }));
 }
 
-/** Category listing page with featured article and grid. */
+/** Category listing page -- text-focused Frutiger Metro layout. */
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category: categorySlug } = await params;
   const category = siteConfig.categories.find(c => c.slug === categorySlug);
@@ -41,36 +38,38 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   const articles = await contentClient.getArticlesByCategory(categorySlug);
   const articleCards = articles.map(prepareArticleCard);
+  const color = getCategoryColor(categorySlug);
 
   const fullCategory = await contentClient.getCategory(categorySlug);
   const subCategories = fullCategory?.subCategories ?? [];
-  const blossomVariant = categoryToVariant[categorySlug] || 1;
 
   return (
     <>
-      <section className="relative min-h-[60vh] flex flex-col justify-center overflow-hidden bg-[#F6F7FB]">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
-          <div className="w-[100vmin] h-[100vmin]">
-            <BlossomSVG variant={blossomVariant} />
-          </div>
-        </div>
-
-        <div className="relative z-10 px-6 lg:px-12 py-20 lg:py-32">
+      <section className="relative min-h-[40vh] flex flex-col justify-end overflow-hidden bg-[#0B0C10]">
+        <div className="relative z-10 px-6 lg:px-12 py-16 lg:py-24">
           <div className="max-w-7xl mx-auto">
             <nav className="breadcrumb mb-6">
-              <Link href="/">Home</Link>
-              <span className="breadcrumb-separator">/</span>
-              <span className="text-[#0B0C10]">{category.label}</span>
+              <Link href="/" className="text-white/50 hover:text-white/80 transition-colors">Home</Link>
+              <span className="breadcrumb-separator text-white/30">/</span>
+              <span className="text-white/80">{category.label}</span>
             </nav>
 
-            <h1 className="hero-headline text-[#0B0C10] mb-4">
+            <h1
+              className="font-display font-black text-6xl lg:text-8xl tracking-tight leading-none mb-4"
+              style={{ color }}
+            >
               {category.label}
             </h1>
-            <p className="text-[#6B7280] text-lg max-w-2xl">
+            <p className="text-white/50 text-lg max-w-2xl">
               Latest stories, analysis, and insights from the world of {category.label.toLowerCase()}.
             </p>
           </div>
         </div>
+
+        <div
+          className="absolute bottom-0 left-0 right-0 h-1"
+          style={{ backgroundColor: color }}
+        />
       </section>
 
       <section className="py-6 bg-[#F6F7FB] border-b border-black/5">
@@ -92,83 +91,50 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         <div className="px-6 lg:px-12">
           <div className="max-w-7xl mx-auto">
             {articleCards.length > 0 ? (
-              <>
-                {articleCards[0] && (
-                  <div className="mb-10">
-                    <Link href={articleCards[0].href} className="group block">
-                      <article className="petal-panel overflow-hidden">
-                        <div className="grid lg:grid-cols-2">
-                          <div className="relative h-64 lg:h-full min-h-[350px] bg-gradient-to-br from-[#FF2D8F]/10 to-[#A02EFF]/10">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-40 h-40 rounded-full bg-gradient-to-br from-[#FF2D8F]/40 to-[#A02EFF]/30 blur-xl" />
-                            </div>
-                          </div>
-                          <div className="p-6 lg:p-10 flex flex-col justify-center">
-                            <span className="kicker block mb-3">Featured</span>
-                            <h2 className="font-display font-black text-2xl lg:text-3xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                              {articleCards[0].article.title}
-                            </h2>
-                            <p className="excerpt mb-6">{articleCards[0].article.excerpt}</p>
-                            <div className="flex items-center gap-4 mb-6">
-                              <span className="meta-text">{articleCards[0].formattedDate}</span>
-                              <span className="reading-time">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <circle cx="12" cy="12" r="10" />
-                                  <polyline points="12 6 12 12 16 14" />
-                                </svg>
-                                {articleCards[0].article.readingTime} min
-                              </span>
-                            </div>
-                            <span className="link-accent">
-                              Read the story
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                                <polyline points="12 5 19 12 12 19" />
-                              </svg>
-                            </span>
-                          </div>
-                        </div>
-                      </article>
-                    </Link>
-                  </div>
-                )}
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-                  {articleCards.slice(1).map((article) => (
-                    <Link key={article.article.id} href={article.href} className="group block article-card">
-                      <article className="petal-panel overflow-hidden">
-                        <div className="relative h-48 overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D8F]/10 to-[#A02EFF]/10 article-card-image" />
-                        </div>
-                        <div className="p-5">
-                          <span className="category-label block mb-2">{article.article.category}</span>
-                          <h3 className="font-display font-bold text-lg leading-tight mb-2 group-hover:text-[#FF2D8F] transition-colors">
-                            {article.article.title}
-                          </h3>
-                          <div className="flex items-center gap-4">
-                            <span className="meta-text">{article.formattedDate}</span>
-                            <span className="reading-time">
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="flex flex-col gap-4">
+                {articleCards.map((card) => (
+                  <Link key={card.article.id} href={card.href} className="group block">
+                    <article
+                      className="bg-white rounded-lg border border-black/5 p-5 lg:p-6 border-l-4 transition-shadow hover:shadow-md"
+                      style={{ borderLeftColor: color }}
+                    >
+                      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h2 className="font-display font-bold text-lg lg:text-xl leading-tight mb-2 group-hover:text-[#0B0C10]/70 transition-colors">
+                            {card.article.title}
+                          </h2>
+                          <p className="text-[#6B7280] text-sm leading-relaxed mb-3 line-clamp-2">
+                            {card.article.excerpt}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#9CA3AF]">
+                            <span>{card.formattedDate}</span>
+                            <span className="flex items-center gap-1">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <circle cx="12" cy="12" r="10" />
                                 <polyline points="12 6 12 12 16 14" />
                               </svg>
-                              {article.article.readingTime} min
+                              {card.article.readingTime} min
                             </span>
+                            {card.article.tags && card.article.tags.length > 0 && (
+                              <div className="flex gap-1.5">
+                                {card.article.tags.slice(0, 3).map((tag: string) => (
+                                  <span
+                                    key={tag}
+                                    className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wide"
+                                    style={{ backgroundColor: `${color}15`, color }}
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </article>
-                    </Link>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-center gap-2">
-                  <button className="pagination-button active">1</button>
-                  <button className="pagination-button">2</button>
-                  <button className="pagination-button">3</button>
-                  <span className="px-2">...</span>
-                  <button className="pagination-button">Next</button>
-                </div>
-              </>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
             ) : (
               <div className="text-center py-20">
                 <p className="text-[#6B7280] text-lg">

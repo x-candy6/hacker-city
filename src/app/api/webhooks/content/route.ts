@@ -2,9 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { parseGCSNotification } from '@stackmatix/cms-core';
 
-/** Health check. */
-export function GET() {
-  return NextResponse.json({ status: 'ok' });
+/** Health check + debug info. */
+export async function GET() {
+  const { contentClient } = await import('@/lib/content');
+  const hasGoogleCreds = !!process.env.GOOGLE_CREDENTIALS;
+  const hasGoogleAppCreds = !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  const bucket = process.env.GCS_CONTENT_BUCKET ?? 'not set';
+  const prefix = process.env.GCS_CONTENT_PREFIX ?? 'not set';
+
+  let articleCount = -1;
+  let error: string | null = null;
+  try {
+    const articles = await contentClient.getArticles({ limit: 5 });
+    articleCount = articles.length;
+  } catch (e) {
+    error = e instanceof Error ? e.message : String(e);
+  }
+
+  return NextResponse.json({
+    status: 'ok',
+    debug: { hasGoogleCreds, hasGoogleAppCreds, bucket, prefix, articleCount, error },
+  });
 }
 
 /** Handle GCS Pub/Sub notification to revalidate content paths. */

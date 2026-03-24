@@ -18,31 +18,35 @@ const client = new GCSContentClient({
   cacheTtl: 300,
 });
 
-/** Wrapper that catches GCS errors during build (no credentials on Vercel build). */
+function logError(method: string, err: unknown): void {
+  console.error(`[contentClient.${method}]`, err instanceof Error ? err.message : err);
+}
+
+/** Wrapper that catches GCS errors and logs them. */
 export const contentClient = {
   getArticles: async (opts?: Parameters<typeof client.getArticles>[0]): Promise<Article[]> => {
-    try { return await client.getArticles(opts); } catch { return []; }
+    try { return await client.getArticles(opts); } catch (e) { logError('getArticles', e); return []; }
   },
   getArticle: async (slug: string): Promise<Article | null> => {
-    try { return await client.getArticle(slug); } catch { return null; }
+    try { return await client.getArticle(slug); } catch (e) { logError('getArticle', e); return null; }
   },
   getArticlesByCategory: async (cat: string, opts?: Parameters<typeof client.getArticlesByCategory>[1]): Promise<Article[]> => {
-    try { return await client.getArticlesByCategory(cat, opts); } catch { return []; }
+    try { return await client.getArticlesByCategory(cat, opts); } catch (e) { logError('getArticlesByCategory', e); return []; }
   },
   getArticlesBySubCategory: async (cat: string, sub: string, opts?: Parameters<typeof client.getArticlesBySubCategory>[2]): Promise<Article[]> => {
-    try { return await client.getArticlesBySubCategory(cat, sub, opts); } catch { return []; }
+    try { return await client.getArticlesBySubCategory(cat, sub, opts); } catch (e) { logError('getArticlesBySubCategory', e); return []; }
   },
   getArticlesByTag: async (tag: string, opts?: Parameters<typeof client.getArticlesByTag>[1]): Promise<Article[]> => {
-    try { return await client.getArticlesByTag(tag, opts); } catch { return []; }
+    try { return await client.getArticlesByTag(tag, opts); } catch (e) { logError('getArticlesByTag', e); return []; }
   },
   searchArticles: async (q: string, opts?: Parameters<typeof client.searchArticles>[1]): Promise<Article[]> => {
-    try { return await client.searchArticles(q, opts); } catch { return []; }
+    try { return await client.searchArticles(q, opts); } catch (e) { logError('searchArticles', e); return []; }
   },
   getCategories: async (): Promise<Category[]> => {
-    try { return await client.getCategories(); } catch { return []; }
+    try { return await client.getCategories(); } catch (e) { logError('getCategories', e); return []; }
   },
   getCategory: async (slug: string): Promise<Category | null> => {
-    try { return await client.getCategory(slug); } catch { return null; }
+    try { return await client.getCategory(slug); } catch (e) { logError('getCategory', e); return null; }
   },
   invalidateCache: (slug?: string) => client.invalidateCache(slug),
   clearCache: () => client.clearCache(),

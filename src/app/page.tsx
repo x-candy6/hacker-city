@@ -39,39 +39,29 @@ export default async function HomePage() {
               {featured && (
                 <div className="lg:col-span-2">
                   <Link href={featured.href} className="group block">
-                    <article className="petal-panel overflow-hidden">
-                      <div className="grid md:grid-cols-2">
-                        <div className="relative h-64 md:h-full min-h-[300px]">
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#2EE9FF]/20 to-[#A02EFF]/20" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#2EE9FF] to-[#A02EFF] opacity-60" />
-                          </div>
-                        </div>
-                        <div className="p-6 lg:p-8 flex flex-col justify-center">
-                          <span className="kicker block mb-3">Featured</span>
-                          <h2 className="font-display font-black text-2xl lg:text-3xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                            {featured.article.title}
-                          </h2>
-                          <p className="excerpt mb-6">{featured.article.excerpt}</p>
-                          <div className="flex items-center gap-4 mb-6">
-                            <span className="meta-text">{featured.formattedDate}</span>
-                            <span className="reading-time">
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                              </svg>
-                              {featured.article.readingTime} min
-                            </span>
-                          </div>
-                          <span className="link-accent">
-                            Read the story
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                              <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                          </span>
-                        </div>
+                    <article className="petal-panel p-8 lg:p-10 border-l-4 border-[#FF2D8F]">
+                      <span className="kicker block mb-4">Featured</span>
+                      <h2 className="font-display font-black text-4xl lg:text-6xl leading-[1.05] mb-6 group-hover:text-[#FF2D8F] transition-colors">
+                        {featured.article.title}
+                      </h2>
+                      <p className="excerpt mb-6 max-w-2xl">{featured.article.excerpt}</p>
+                      <div className="flex items-center gap-4 mb-6">
+                        <span className="meta-text">{featured.formattedDate}</span>
+                        <span className="reading-time">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                          </svg>
+                          {featured.article.readingTime} min
+                        </span>
                       </div>
+                      <span className="link-accent">
+                        Read the story
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                          <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </span>
                     </article>
                   </Link>
                 </div>
@@ -108,32 +98,22 @@ export default async function HomePage() {
             <span className="category-label block mb-8 text-right">Tech</span>
 
             {techArticles[0] && (
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="order-2 lg:order-1">
-                  <Link href={techArticles[0].href} className="group block">
-                    <article className="petal-panel p-8">
-                      <span className="kicker block mb-3">Trending</span>
-                      <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                        {techArticles[0].article.title}
-                      </h2>
-                      <p className="excerpt mb-6">{techArticles[0].article.excerpt}</p>
-                      <span className="link-accent">
-                        Read more
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </span>
-                    </article>
-                  </Link>
-                </div>
-                <div className="order-1 lg:order-2 relative h-80 lg:h-[500px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#2EE9FF]/30 to-[#FF2D8F]/20 rounded-[28px]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#2EE9FF] to-[#A02EFF] opacity-50 blur-xl" />
-                  </div>
-                </div>
-              </div>
+              <Link href={techArticles[0].href} className="group block">
+                <article className="petal-panel p-8 border-t-4 border-[#2EE9FF]">
+                  <span className="kicker block mb-3">Trending</span>
+                  <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
+                    {techArticles[0].article.title}
+                  </h2>
+                  <p className="excerpt mb-6 max-w-2xl">{techArticles[0].article.excerpt}</p>
+                  <span className="link-accent">
+                    Read more
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </article>
+              </Link>
             )}
           </div>
         </div>
@@ -152,32 +132,22 @@ export default async function HomePage() {
             <span className="category-label block mb-8">Business</span>
 
             {businessArticles[0] && (
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="relative h-80 lg:h-[500px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6A00]/30 to-[#A02EFF]/20 rounded-[28px]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF2D8F] opacity-50 blur-xl" />
-                  </div>
-                </div>
-                <div>
-                  <Link href={businessArticles[0].href} className="group block">
-                    <article className="petal-panel p-8">
-                      <span className="kicker block mb-3">Analysis</span>
-                      <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                        {businessArticles[0].article.title}
-                      </h2>
-                      <p className="excerpt mb-6">{businessArticles[0].article.excerpt}</p>
-                      <span className="link-accent">
-                        Explore the trend
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </span>
-                    </article>
-                  </Link>
-                </div>
-              </div>
+              <Link href={businessArticles[0].href} className="group block">
+                <article className="petal-panel p-8 border-t-4 border-[#FF6A00]">
+                  <span className="kicker block mb-3">Analysis</span>
+                  <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
+                    {businessArticles[0].article.title}
+                  </h2>
+                  <p className="excerpt mb-6 max-w-2xl">{businessArticles[0].article.excerpt}</p>
+                  <span className="link-accent">
+                    Explore the trend
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </article>
+              </Link>
             )}
           </div>
         </div>
@@ -196,32 +166,22 @@ export default async function HomePage() {
             <span className="category-label block mb-8 text-right">Culture</span>
 
             {cultureArticles[0] && (
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="order-2 lg:order-1">
-                  <Link href={cultureArticles[0].href} className="group block">
-                    <article className="petal-panel p-8">
-                      <span className="kicker block mb-3">Spotlight</span>
-                      <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                        {cultureArticles[0].article.title}
-                      </h2>
-                      <p className="excerpt mb-6">{cultureArticles[0].article.excerpt}</p>
-                      <span className="link-accent">
-                        See the list
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </span>
-                    </article>
-                  </Link>
-                </div>
-                <div className="order-1 lg:order-2 relative h-80 lg:h-[500px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D8F]/30 to-[#D0FF00]/20 rounded-[28px]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#FF2D8F] to-[#2EE9FF] opacity-50 blur-xl" />
-                  </div>
-                </div>
-              </div>
+              <Link href={cultureArticles[0].href} className="group block">
+                <article className="petal-panel p-8 border-t-4 border-[#FF2D8F]">
+                  <span className="kicker block mb-3">Spotlight</span>
+                  <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
+                    {cultureArticles[0].article.title}
+                  </h2>
+                  <p className="excerpt mb-6 max-w-2xl">{cultureArticles[0].article.excerpt}</p>
+                  <span className="link-accent">
+                    See the list
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </article>
+              </Link>
             )}
           </div>
         </div>
@@ -240,32 +200,22 @@ export default async function HomePage() {
             <span className="category-label block mb-8">Earth</span>
 
             {earthArticles[0] && (
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="relative h-80 lg:h-[500px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#39FF14]/30 to-[#2EE9FF]/20 rounded-[28px]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#39FF14] to-[#2EE9FF] opacity-50 blur-xl" />
-                  </div>
-                </div>
-                <div>
-                  <Link href={earthArticles[0].href} className="group block">
-                    <article className="petal-panel p-8">
-                      <span className="kicker block mb-3">Field Notes</span>
-                      <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                        {earthArticles[0].article.title}
-                      </h2>
-                      <p className="excerpt mb-6">{earthArticles[0].article.excerpt}</p>
-                      <span className="link-accent">
-                        Read the report
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </span>
-                    </article>
-                  </Link>
-                </div>
-              </div>
+              <Link href={earthArticles[0].href} className="group block">
+                <article className="petal-panel p-8 border-t-4 border-[#39FF14]">
+                  <span className="kicker block mb-3">Field Notes</span>
+                  <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
+                    {earthArticles[0].article.title}
+                  </h2>
+                  <p className="excerpt mb-6 max-w-2xl">{earthArticles[0].article.excerpt}</p>
+                  <span className="link-accent">
+                    Read the report
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </article>
+              </Link>
             )}
           </div>
         </div>
@@ -284,32 +234,22 @@ export default async function HomePage() {
             <span className="category-label block mb-8 text-right">Science</span>
 
             {healthArticles[0] && (
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="order-2 lg:order-1">
-                  <Link href={healthArticles[0].href} className="group block">
-                    <article className="petal-panel p-8">
-                      <span className="kicker block mb-3">Discovery</span>
-                      <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
-                        {healthArticles[0].article.title}
-                      </h2>
-                      <p className="excerpt mb-6">{healthArticles[0].article.excerpt}</p>
-                      <span className="link-accent">
-                        Dive deeper
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <line x1="5" y1="12" x2="19" y2="12" />
-                          <polyline points="12 5 19 12 12 19" />
-                        </svg>
-                      </span>
-                    </article>
-                  </Link>
-                </div>
-                <div className="order-1 lg:order-2 relative h-80 lg:h-[500px]">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#A02EFF]/30 to-[#FF2D8F]/20 rounded-[28px]" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#A02EFF] to-[#2EE9FF] opacity-50 blur-xl" />
-                  </div>
-                </div>
-              </div>
+              <Link href={healthArticles[0].href} className="group block">
+                <article className="petal-panel p-8 border-t-4 border-[#A02EFF]">
+                  <span className="kicker block mb-3">Discovery</span>
+                  <h2 className="font-display font-black text-2xl lg:text-4xl leading-tight mb-4 group-hover:text-[#FF2D8F] transition-colors">
+                    {healthArticles[0].article.title}
+                  </h2>
+                  <p className="excerpt mb-6 max-w-2xl">{healthArticles[0].article.excerpt}</p>
+                  <span className="link-accent">
+                    Dive deeper
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </article>
+              </Link>
             )}
           </div>
         </div>
@@ -335,27 +275,20 @@ export default async function HomePage() {
             <div className="grid md:grid-cols-2 gap-6">
               {articleCards.slice(3, 9).map((article) => (
                 <Link key={article.article.id} href={article.href} className="group block article-card">
-                  <article className="petal-panel p-4">
-                    <div className="flex gap-4 items-start">
-                      <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF2D8F]/20 to-[#A02EFF]/20" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="category-label block mb-1">{article.article.category}</span>
-                        <h4 className="font-display font-bold text-base leading-tight line-clamp-2 group-hover:text-[#FF2D8F] transition-colors">
-                          {article.article.title}
-                        </h4>
-                        <div className="flex items-center gap-3 mt-2">
-                          <span className="meta-text">{article.formattedDate}</span>
-                          <span className="reading-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <circle cx="12" cy="12" r="10" />
-                              <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                            {article.article.readingTime} min
-                          </span>
-                        </div>
-                      </div>
+                  <article className="petal-panel p-4 border-l-4 border-[#FF2D8F]">
+                    <span className="category-label block mb-1">{article.article.category}</span>
+                    <h4 className="font-display font-bold text-base leading-tight line-clamp-2 group-hover:text-[#FF2D8F] transition-colors">
+                      {article.article.title}
+                    </h4>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="meta-text">{article.formattedDate}</span>
+                      <span className="reading-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        {article.article.readingTime} min
+                      </span>
                     </div>
                   </article>
                 </Link>

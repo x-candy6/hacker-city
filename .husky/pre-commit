@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Only check staged files that are TypeScript/TSX/CSS
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|css)$' || true)
+
+if [ -z "$STAGED" ]; then
+  echo "No TS/TSX/CSS files staged, skipping checks."
+  exit 0
+fi
+
+echo "Running pre-commit checks..."
+
+# Typecheck
+echo "  typecheck..."
+if ! pnpm typecheck; then
+  echo "Typecheck failed."
+  exit 1
+fi
+
+# Build
+echo "  build..."
+if ! pnpm build; then
+  echo "Build failed."
+  exit 1
+fi
+
+echo "All pre-commit checks passed."

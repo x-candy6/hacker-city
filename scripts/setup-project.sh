@@ -156,10 +156,68 @@ else
 fi
 
 # ─────────────────────────────────────────────────────
-# 7. Register as subscriber + copy fixtures
+# 7. Sentry error tracking
 # ─────────────────────────────────────────────────────
 echo ""
-echo "[7/8] Registering subscriber and copying content..."
+echo "[7/9] Sentry setup..."
+
+if command -v sentry-cli >/dev/null 2>&1; then
+  SENTRY_ORG="stackmatix"
+  SENTRY_TOKEN=$(cat ~/.sentryclirc 2>/dev/null | grep 'token=' | sed 's/token=//' | tr -d ' ')
+
+  if [ -n "$SENTRY_TOKEN" ]; then
+    # Create project if it doesn't exist
+    PROJECT_EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
+      "https://sentry.io/api/0/projects/${SENTRY_ORG}/${SITE_SLUG}/" \
+      -H "Authorization: Bearer $SENTRY_TOKEN")
+
+    if [ "$PROJECT_EXISTS" != "200" ]; then
+      echo "  Creating Sentry project..."
+      curl -s -X POST "https://sentry.io/api/0/teams/${SENTRY_ORG}/${SENTRY_ORG}/projects/" \
+        -H "Authorization: Bearer $SENTRY_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"name\": \"${SITE_SLUG}\", \"slug\": \"${SITE_SLUG}\", \"platform\": \"javascript-nextjs\"}" > /dev/null
+      echo "  Project created."
+    else
+      echo "  Sentry project exists."
+    fi
+
+    # Get DSN
+    SENTRY_DSN=$(curl -s "https://sentry.io/api/0/projects/${SENTRY_ORG}/${SITE_SLUG}/keys/" \
+      -H "Authorization: Bearer $SENTRY_TOKEN" | \
+      python3 -c "import sys,json; print(json.load(sys.stdin)[0]['dsn']['public'])" 2>/dev/null)
+
+    if [ -n "$SENTRY_DSN" ]; then
+      echo "  DSN: $SENTRY_DSN"
+      # Replace DSN placeholders in sentry config files
+      for f in sentry.client.config.ts sentry.server.config.ts sentry.edge.config.ts; do
+        if [ -f "$f" ]; then
+          sed -i '' "s|{{SENTRY_DSN}}|${SENTRY_DSN}|g" "$f" 2>/dev/null || true
+        fi
+      done
+      # Replace project name in next.config.ts
+      if [ -f "next.config.ts" ]; then
+        sed -i '' "s|project: '{{PROJECT_NAME}}'|project: '${SITE_SLUG}'|g" next.config.ts 2>/dev/null || true
+      fi
+      echo "  Sentry configs updated with DSN."
+
+      # Add SENTRY_AUTH_TOKEN to Vercel for source map uploads
+      set_vercel_env "SENTRY_AUTH_TOKEN" "$SENTRY_TOKEN"
+    else
+      echo "  WARNING: Could not retrieve DSN. Update sentry configs manually."
+    fi
+  else
+    echo "  No sentry-cli auth token found. Run: sentry-cli login"
+  fi
+else
+  echo "  sentry-cli not installed. Skipping. Install with: brew install getsentry/tools/sentry-cli"
+fi
+
+# ─────────────────────────────────────────────────────
+# 8. Register as subscriber + copy fixtures
+# ─────────────────────────────────────────────────────
+echo ""
+echo "[8/9] Registering subscriber and copying content..."
 
 # Check if subscriber path exists
 if gsutil ls "gs://${GCS_BUCKET}/ln/subscribers/${SITE_SLUG}/" >/dev/null 2>&1; then
@@ -174,10 +232,10 @@ echo "  NOTE: Register this site in gs://${GCS_BUCKET}/ln/config/subscribers.jso
 echo "  Or use: cd ../multibrand-cms && pnpm create-brand"
 
 # ─────────────────────────────────────────────────────
-# 8. Deploy
+# 9. Deploy
 # ─────────────────────────────────────────────────────
 echo ""
-echo "[8/8] Deploying to Vercel..."
+echo "[9/9] Deploying to Vercel..."
 
 # Commit any changes from setup
 if [ -n "$(git status --porcelain)" ]; then

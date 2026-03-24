@@ -6,6 +6,16 @@ import { siteConfig } from '@/lib/config';
 
 export const revalidate = 300;
 
+/** Maps a category slug to its Frutiger Metro accent color. */
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    technology: '#2EE9FF', business: '#FF6A00', culture: '#FF2D8F',
+    earth: '#39FF14', health: '#A02EFF', news: '#FF2D8F',
+    sport: '#2EE9FF', arts: '#D0FF00', travel: '#39FF14',
+  };
+  return colors[category] ?? '#FF2D8F';
+}
+
 const categoryToVariant: Record<string, 1 | 2 | 3 | 4 | 5 | 6> = {
   technology: 2,
   business: 3,
@@ -54,9 +64,11 @@ export default async function ArticlePage({
   });
 
   const blossomVariant = categoryToVariant[categorySlug] || 1;
+  const accentColor = getCategoryColor(categorySlug);
 
   return (
     <>
+      <div className="w-full h-1" style={{ backgroundColor: accentColor }} />
       <section className="relative min-h-[50vh] flex flex-col justify-center overflow-hidden bg-[#F6F7FB]">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
           <div className="w-[80vmin] h-[80vmin]">
@@ -75,7 +87,7 @@ export default async function ArticlePage({
             </nav>
 
             <div className="flex flex-wrap items-center gap-4 mb-6">
-              <span className="kicker">{category?.label || article.category}</span>
+              <span className="kicker" style={{ color: accentColor }}>{category?.label || article.category}</span>
               <span className="text-[#6B7280]">|</span>
               <span className="meta-text">{formattedDate}</span>
               <span className="text-[#6B7280]">|</span>
@@ -88,7 +100,7 @@ export default async function ArticlePage({
               </span>
             </div>
 
-            <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl leading-tight mb-6">
+            <h1 className="font-display font-black text-4xl lg:text-5xl leading-tight mb-6">
               {article.title}
             </h1>
 
@@ -113,11 +125,7 @@ export default async function ArticlePage({
             <div className="grid lg:grid-cols-3 gap-10">
               <div className="lg:col-span-2">
                 <article className="petal-panel p-8 lg:p-12">
-                  <div className="relative h-64 lg:h-96 mb-8 rounded-[28px] overflow-hidden bg-gradient-to-br from-[#FF2D8F]/10 to-[#A02EFF]/10">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#FF2D8F]/40 to-[#A02EFF]/30 blur-xl" />
-                    </div>
-                  </div>
+                  <div className="w-16 h-1 mb-8 rounded-full" style={{ backgroundColor: accentColor }} />
 
                   {article.author && (
                     <div className="flex items-center gap-4 mb-8 pb-8 border-b border-black/5">
